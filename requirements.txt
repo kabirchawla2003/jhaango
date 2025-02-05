@@ -15,7 +15,7 @@ click-plugins==1.1.1
 click-repl==0.3.0
 #cloud-init==24.4
 colorama==0.4.6
-command-not-found==0.3
+#command-not-found==0.3
 configobj==5.0.8
 constantly==23.10.4
 cron-descriptor==1.4.5
