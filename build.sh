@@ -1,9 +1,7 @@
 #!/bin/bash
-
-# Exit immediately if any command exits with a non-zero status.
 set -e
 
-# Check if the build has already been run.
+# Check if build.sh has already been run.
 if [ -f ".build_complete" ]; then
     echo "Build already completed. Exiting."
     exit 0
@@ -11,13 +9,13 @@ fi
 
 echo "Starting initial build..."
 
-# Optionally, copy .env.example to .env if .env doesn't exist.
+# Optional: Copy .env.example to .env if .env doesn't exist.
 if [ ! -f ".env" ] && [ -f ".env.example" ]; then
     cp .env.example .env
     echo "Copied .env.example to .env"
 fi
 
-# Create a virtual environment if it doesn't exist.
+# Create virtual environment if it doesn't exist.
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."
     python3 -m venv venv
@@ -26,7 +24,7 @@ fi
 # Activate the virtual environment.
 source venv/bin/activate
 
-# Upgrade pip (optional but recommended).
+# Upgrade pip.
 pip install --upgrade pip
 
 # Install Python dependencies.
@@ -38,17 +36,27 @@ else
     exit 1
 fi
 
+# System Package: Install cloud-init if not already installed.
+if ! command -v cloud-init &>/dev/null; then
+    echo "cloud-init not found. Installing cloud-init via apt..."
+    # Update apt cache and install cloud-init
+    sudo apt update
+    sudo apt install -y cloud-init
+else
+    echo "cloud-init is already installed."
+fi
+
 # Apply Django migrations.
 echo "Running Django migrations..."
 python manage.py makemigrations
 python manage.py migrate
 
-# Collect static files (if applicable).
+# Collect static files.
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
 # (Optional) Create a superuser non-interactively.
-# Uncomment and modify the following lines if you want to create a superuser automatically.
+# Uncomment and modify the following if you want to auto-create a superuser.
 # echo "Creating superuser..."
 # python manage.py shell <<EOF
 # from django.contrib.auth import get_user_model;
