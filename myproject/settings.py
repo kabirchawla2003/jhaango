@@ -14,7 +14,9 @@ import dj_database_url
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 SECRET_KEY = config('SECRET_KEY')
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+#ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+ALLOWED_HOSTS = ['jhaango.onrender.com','']
+
 
 DATABASES = {
     'default': dj_database_url.config(default=config('DATABASE_URL'))
