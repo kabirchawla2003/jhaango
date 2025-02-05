@@ -39,7 +39,6 @@ fi
 # System Package: Install cloud-init if not already installed.
 if ! command -v cloud-init &>/dev/null; then
     echo "cloud-init not found. Installing cloud-init via apt..."
-    # Update apt cache and install cloud-init
     sudo apt update
     sudo apt install -y cloud-init
 else
@@ -55,8 +54,17 @@ python manage.py migrate
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
+# Start Celery worker in the background.
+# Make sure to replace 'myproject' with your actual Django project module.
+echo "Starting Celery worker..."
+nohup celery -A myproject worker -l info > celery_worker.log 2>&1 &
+
+# Start Celery Beat in the background.
+echo "Starting Celery Beat..."
+nohup celery -A myproject beat -l info > celery_beat.log 2>&1 &
+
 # (Optional) Create a superuser non-interactively.
-# Uncomment and modify the following if you want to auto-create a superuser.
+# Uncomment and modify the following lines if you want to auto-create a superuser.
 # echo "Creating superuser..."
 # python manage.py shell <<EOF
 # from django.contrib.auth import get_user_model;
