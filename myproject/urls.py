@@ -20,6 +20,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from .views import ProtectedView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,5 +29,6 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # You can include your Bee app URLs here
     path('bee/', include('Bee.urls')),
+    path('api/protected/', ProtectedView.as_view(), name='protected'),
 ]
 
