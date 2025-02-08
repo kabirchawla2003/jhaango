@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 from decouple import config, Csv
 import dj_database_url
+import os
+from datetime import timedelta
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 SECRET_KEY = config('SECRET_KEY')
@@ -184,31 +186,41 @@ CELERY_TIMEZONE = 'UTC'
 
 
 
-"""LOGGING = {
+LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
         },
-        # Optionally, add a handler to forward logs to Logstash.
+    },
+    'handlers': {
         'logstash': {
-            'class': 'logstash.TCPLogstashHandler',  # requires an additional package such as python-logstash
-            'host': 'your-logstash-host',
+            'level': 'INFO',
+            'class': 'logstash.LogstashHandler',
+            'host': 'localhost',
             'port': 5959,
             'version': 1,
+            'message_type': 'django',
+            'fqdn': False,
+            'tags': ['django'],
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
         },
     },
     'loggers': {
         'django': {
             'handlers': ['console', 'logstash'],
             'level': 'INFO',
+            'propagate': True,
         },
-        # You can configure additional loggers (e.g., for Celery)
-        'celery': {
+        'django.request': {
             'handlers': ['console', 'logstash'],
             'level': 'INFO',
+            'propagate': False,
         },
-    },
+    }
 }
-"""
